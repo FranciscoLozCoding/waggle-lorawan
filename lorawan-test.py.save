@@ -3,7 +3,6 @@ import base64
 import json
 import logging
 import os
-import re
 
 import paho.mqtt.client as mqtt
 from waggle.plugin import Plugin
@@ -36,7 +35,6 @@ def mess(client, userdata, message):
     )
     logging.info(data)
     tmp_dict = json.loads(message.payload.decode("utf-8"))
-    logging.info("JSON Object: %s", tmp_dict)
     try:
         bytes_b64 = tmp_dict["data"].encode("utf-8")
     except:
@@ -67,23 +65,17 @@ def mess(client, userdata, message):
             #     key, msg, meta={"devName": tmp_dict["deviceName"], "devEUI": tmp_dict["devEUI"]}
             # )
             # TODO: get the dry-run in here to conditional publish or not
-            pattern = r'"deviceName":"(.+?)"'
-            match = re.search(pattern, message.payload.decode("utf-8"))
-            deviceName = match.group(1)
-
-            pattern = r'"devEui":"(.+?)"'
-            match = re.search(pattern, message.payload.decode("utf-8"))
-            devEUI = match.group(1)
-
             logging.info(
                 "publish: %s, %s, meta={'devName': %s, 'devEUI': %s}",
                 key,
                 msg,
-                deviceName,
-                devEUI,
+                tmp_dict["deviceInfo"]["deviceName"],
+                tmp_dict["deviceInfo"]["devEUI"],
             )
         except:
             logging.error("something went wrong")
+    logging.info(data)
+    logging.info(tmp_dict["deviceName"])
 
 
 def main():
