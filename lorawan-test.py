@@ -8,6 +8,8 @@ import re
 import paho.mqtt.client as mqtt
 from waggle.plugin import Plugin
 
+from parse import parse_message_payload
+
 # TODO: look into this, does this mean we only publish locally ?
 os.environ["PYWAGGLE_LOG_DIR"] = "/var/log/pywaggle"
 
@@ -35,9 +37,8 @@ def mess(client, userdata, message):
         "Message received: " + message.payload.decode("utf-8") + " with topic " + str(message.topic)
     )
     logging.info(data)
-    tmp_dict = json.loads(message.payload.decode("utf-8"))
-    logging.info("JSON Object: %s", tmp_dict)
     try:
+        tmp_dict = parse_message_payload(message.payload.decode("utf-8"))
         bytes_b64 = tmp_dict["data"].encode("utf-8")
     except:
         logging.error("Message did not contain data.")
