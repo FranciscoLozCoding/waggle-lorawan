@@ -1,9 +1,7 @@
 import argparse
 import base64
-import json
 import logging
 import os
-import re
 
 import paho.mqtt.client as mqtt
 from waggle.plugin import Plugin
@@ -39,7 +37,6 @@ def mess(client, userdata, message):
     logging.info(data)
     try:
         tmp_dict = parse_message_payload(message.payload.decode("utf-8"))
-        logging.info("JSON Object: %s", tmp_dict)
         bytes_b64 = tmp_dict["data"].encode("utf-8")
     except:
         logging.error("Message did not contain data.")
