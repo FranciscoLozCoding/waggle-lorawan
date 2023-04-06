@@ -39,6 +39,7 @@ def mess(client, userdata, message):
     logging.info(data)
     try:
         tmp_dict = parse_message_payload(message.payload.decode("utf-8"))
+        logging.info("JSON Object: %s", tmp_dict)
         bytes_b64 = tmp_dict["data"].encode("utf-8")
     except:
         logging.error("Message did not contain data.")
@@ -68,20 +69,12 @@ def mess(client, userdata, message):
             #     key, msg, meta={"devName": tmp_dict["deviceName"], "devEUI": tmp_dict["devEUI"]}
             # )
             # TODO: get the dry-run in here to conditional publish or not
-            pattern = r'"deviceName":"(.+?)"'
-            match = re.search(pattern, message.payload.decode("utf-8"))
-            deviceName = match.group(1)
-
-            pattern = r'"devEui":"(.+?)"'
-            match = re.search(pattern, message.payload.decode("utf-8"))
-            devEUI = match.group(1)
-
             logging.info(
                 "publish: %s, %s, meta={'devName': %s, 'devEUI': %s}",
                 key,
                 msg,
-                deviceName,
-                devEUI,
+                tmp_dict["deviceInfo"]["deviceName"],
+                tmp_dict["deviceInfo"]["devEui"]
             )
         except:
             logging.error("something went wrong")
